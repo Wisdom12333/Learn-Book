@@ -1,6 +1,6 @@
 # README
 
-基于我对于**Java核心技术卷一(** ***Core Java Volume Ⅰ-Fundamentals 10th Edition*** **)**的阅读,所记录的重要内容笔记.
+基于我对于**Java核心技术卷一**( ***Core Java Volume Ⅰ-Fundamentals 10th Edition*** )的阅读,所记录的重要内容笔记.
 
 对于每一个章节内容阅读结束之后的总结文档.
 
