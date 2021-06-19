@@ -28,6 +28,14 @@ Spring的**自动配置(autoconfiguration)** 起源于**自动装配(autowiring)
 
 ## 编写Spring应用
 
+Spring 构造型注解
+
+- @Repository
+- @Service
+- @Controller
+
+三者都是@Component的特殊化,分别在持久性,服务和表示层中.
+
 ### 处理Web请求
 
 Spring MVC是Spring自带的Web框架,其核心是**控制器(controller)**.是处理请求并以某种方式进行信息响应的类.
