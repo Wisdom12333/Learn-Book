@@ -3,7 +3,8 @@ Record study notes from some books.
 
 ## Menu
 
-- [Java核心技术卷一](https://github.com/Wisdom12333/Learn-Book/tree/main/Java%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E5%8D%B7%E4%B8%80)
+- [Java核心技术卷一](https://github.com/Wisdom12333/Learn-Book/tree/main/Java核心技术卷一)
 - [Spring实战](https://github.com/Wisdom12333/Learn-Book/tree/main/Spring%20In%20Action)
 - [Mybatis官方文档](https://github.com/Wisdom12333/Learn-Book/tree/main/Mybatis官方文档)
+- [SQL必知必会](https://github.com/Wisdom12333/Learn-Book/tree/main/SQL必知必会)
 
