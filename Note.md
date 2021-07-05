@@ -1,3 +1,34 @@
+# Java
+
+## 接口的实例化
+
+经常在Spring中可以看到
+
+```java
+//interface A
+A a = new B();
+```
+
+貌似是对于接口A实例化,实际上,如果类B实现了A,这种写法是符合规范的.
+
+除此之外          
+
+```java
+ Ob.fun(new A(){
+ 	
+ 	@Override
+ 	public void onClick(int x){
+ 		
+ 	}
+ });
+```
+
+这种写法是一种匿名内部类的写法,其中`new`产生一个实现接口的匿名内部类.
+
+
+
+
+
 # Spring
 
 ## @Bean和@Component的区别
@@ -14,4 +45,14 @@
 如果并不需要该类中所有方法都注册为bean,使用@Bean将方法注册.
 
 两者都可以使用@Autowired装配.
+
+
+
+
+
+
+
+
+
+
 
