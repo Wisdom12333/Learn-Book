@@ -1,0 +1,322 @@
+# Vue
+> 一套用于**构建用户界面**的**渐进式**JavaScript框架
+
+## Vue实例
+
+### 创建
+
+``` js
+const vm = new Vue({
+	el:'#id', //element,指定Vue组件绑定的容器
+	data:{
+		name:'Vue'
+	}
+})
+```
+
+> 一个Vue实例,能且只能对应一个容器
+
+Vue组件与容器的绑定,可以通过`vm.$mount('')`实现.
+
+data的 #函数式写法
+
+``` js
+data:function(){
+    return{
+        //一个对象
+    }
+}
+//函数式的data写法不能使用箭头函数
+//同样适用于Vue管理的函数
+```
+
+#### 数据代理
+
+ **`Object.defineProperty()`**
+
+这个方法可以控制对象属性
+
+Ex:
+
+``` js
+let person = {
+    name : 'uu',
+}
+let number = 18
+Object.defineProperty(person,//控制的对象
+                     'age',{//属性
+    //当读取person.age时,调用get方法
+	get(){
+        return number;//使age与number绑定
+    },
+    //当修改person.age时,调用set方法
+    set(value){
+        number = value;
+    }
+})
+```
+
+Vue实际上是对 data 做了数据代理.
+
+### 模板语法
+
+使用`v-bind:`对HTML标签属性进行绑定.
+
+``` html
+<div id="root">
+    <div v-bind:id="id"></div>
+	<!--<div :id="id"></div> 简写-->
+</div>
+<script type="text/javascript">
+        const vm = new Vue({
+            el: '#root',
+            data: {
+                id: 'vbind'
+            }
+        })
+</script>
+```
+
+v-bind是单向绑定,Vue实例中对象的改变会导致页面的改变,但是页面数据的改变不会影响对象.
+
+要进行双向绑定,使用`v-model`.需要注意的是,`v-model`只能使用于表单类的标签,即标签必须要有**value**属性.
+
+> 所以当使用`v-model`对标签的value属性进行绑定时,可以将
+>
+> `v-model:value=""`简写为
+>
+> `v-model=“”`
+
+
+
+### 事件
+
+使用`v-on:click=""`(`@click=""`)
+
+绑定的方法需要在Vue实例中定义
+
+```js
+new Vue({
+    methods:{
+        show(){
+            //方法默认拥有参数event
+            console.log(event);
+        }
+    }
+})
+```
+
+#### 事件修饰符
+
+- `@click.prevent=""`阻止标签的默认行为.
+
+- `.stop`:阻止事件冒泡
+- `.once`:事件只触发一次(一次性行为)
+- `.capture`:使用事件的捕获模式
+- `.self`:只有`event.target`是当前操作的元素时才触发事件
+- `.passive`:事件默认行为立即执行,无需等待回调
+
+#### 键盘事件
+
+``` html
+<input type="text" placeholder="回车输入"
+       @keyup.enter="">
+<!-- keydown键盘按下触发,keyup键盘起来触发-->
+```
+
+按键别名
+
+- enter => 回车
+- delete => 删除和退格
+- esc
+- space
+- tab
+- up
+- down
+- left
+- right
+
+### 计算属性
+
+对于任何复杂逻辑,都应当使用**计算属性**.
+
+``` js
+var vm = new Vue({
+  el: '#example',
+  data: {
+    message: 'Hello'
+  },
+  computed: {
+    // 计算属性的 getter
+    reversedMessage: function () {
+      //当只有getter时,可以简写为reversedMessage(){}
+      // `this` 指向 vm 实例
+      return this.message.split('').reverse().join('')
+    }
+  }
+})
+```
+
+> 计算属性的值在每次`get`被调用时,都会生成缓存,所以计算属性在页面多次使用,只会调用一次`get`
+
+`get`调用的条件:
+
+- 页面初始化时
+- 依赖的数据发生变化时
+
+计算属性同样可以增加**setter**.
+
+```js
+// ...
+computed: {
+  fullName: {
+    // getter
+    get: function () {
+      return this.firstName + ' ' + this.lastName
+    },
+    // setter
+    set: function (newValue) {
+      var names = newValue.split(' ')
+      this.firstName = names[0]
+      this.lastName = names[names.length - 1]
+    }
+  }
+}
+// ...
+```
+
+这样使用时,如果运行`vm.fullName = 'John Doe'`,调用setter,可以更新`vm.firstName` 和 `vm.lastName`.
+
+计算属性并不能看作一个Vue实例的对象,实际上只是在生成时,产生了一个同名的对象,对象的值为计算属性setter的返回值.所以并不能使用对象属性的方法.
+
+### 侦听器
+
+计算属性在大多数情况下更合适,但有时也需要一个自定义的侦听器. Vue 通过 `watch` 选项提供了一个更通用的方法,来响应数据的变化. 当需要在数据变化时执行异步或开销较大的操作时,这个方式是最有用的.
+
+```js
+const vm = new Vue({
+  el: '#watch-example',
+  data: {
+    question: ''
+  },
+  watch: {
+    // 如果 `question` 发生改变，这个函数就会运行
+    question(newValue, oldValue) {
+      console.log(question);
+    }
+    //非简写形式
+    question:{
+      handler(newValue, oldValue) {
+        console.log(question);
+      }
+  	} 
+  }
+}
+//JPI写法
+vm.$watch('question',function(newValue, oldValue){
+    console.log(question);
+})
+```
+
+配置`deep:true`使能深度监视.即对象中属性值改变时也触发监视.
+
+例如,`number.a`的值改变,`deep:false`时不触发,为`true`时触发.
+
+### 条件渲染
+
+#### v-show
+
+`v-show="state"`控制标签显示与否.
+
+不显示的底层原理其实是`style="display:none"`
+
+#### v-if&v-else
+
+`v-if="state"`也可以控制,但是实现是在HTML渲染时跳过.
+
+相对于`v-show`,`v-if`更加消耗性能.在频繁的变化下,应该使用`v-show`.
+
+``` html
+<!--v-if,v-else-if,v-else-->
+<div v-if="type === 'A'">
+  A
+</div>
+<div v-else-if="type === 'B'">
+  B
+</div>
+<div v-else-if="type === 'C'">
+  C
+</div>
+<div v-else>
+  Not A/B/C
+</div>
+```
+
+如果`v-if`和`v-else`中拥有相同的元素,Vue为了高效的渲染,会复用已有元素.
+
+所以如果同一个`<input>`标签,当切换时不会替换内容.
+
+此时,可以向标签添加属性`key`来表示其独立性.
+
+> 如果多个元素需要使用相同的条件渲染,为了不破坏页面结构,可以使用`<template>`标签,最终渲染时将会排除它.
+>
+> ``` html
+> <template v-if="ok">
+>   <h1>Title</h1>
+>   <p>Paragraph 1</p>
+>   <p>Paragraph 2</p>
+> </template>
+> ```
+
+### 列表渲染
+
+使用`v-for`渲染列表
+
+```html
+<ul id="example-1">
+  <li v-for="item in items" :key="item.message">
+    {{ item.message }}
+  </li>
+</ul>
+<!-- 指定key作为标识 -->
+<!-- 'in' 可以使用 'of' 代替-->
+```
+
+`items`是被Vue管理的数组.
+
+`v-for=“(item, index) in items”`,添加第二个参数,作为循环的索引.
+
+同样可以使用`v-for`遍历对象,这时第一个参数为对象的`value`,第二个为对象的`key`.
+
+字符串也可以通过`v-for`遍历,参数为 `char,index`.
+
+> 另外可以使用`v-for="(number,index) of 10"`,输出一个数列.
+
+#### Key
+
+用于标识节点,使其具有独立性.
+
+当列表无需更新,或者更新不会破坏原有的顺序结构时,可以使用`index`作为key,如果列表需要更新,不建议使用.应该使用数组数据的唯一标识.
+
+#### 过滤
+
+
+
+
+
+## MVVM模型
+
+### M: 模型(Model)
+
+对应**data**中的数据
+
+### V: 视图(View)
+
+模板
+
+### VM: 视图模型(ViewModel)
+
+Vue实例对象
+
+
+
