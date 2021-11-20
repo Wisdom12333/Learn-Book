@@ -58,6 +58,26 @@ Object.defineProperty(person,//控制的对象
 
 Vue实际上是对 data 做了数据代理.
 
+### 数据监视
+
+Vue中对于数据的监视,是基于getter,setter方法的监视.
+
+数据改变时调用setter,改变数据的值,并且更新界面.
+
+向对象中添加对象,Vue默认不添加监视.
+
+要使用
+
+```js
+Vue.set(target, propertyName/index, value)
+//或者
+vm.$set()
+```
+
+
+
+对于数组,Vue重写了数组的常用方法.
+
 ### 模板语法
 
 使用`v-bind:`对HTML标签属性进行绑定.
@@ -126,15 +146,15 @@ new Vue({
 
 按键别名
 
-- enter => 回车
-- delete => 删除和退格
-- esc
-- space
-- tab
-- up
-- down
-- left
-- right
+- `enter` => 回车
+- `delete` => 删除和退格
+- `esc`
+- `space`
+- `tab`
+- `up`
+- `down`
+- `left`
+- `right`
 
 ### 计算属性
 
@@ -222,6 +242,43 @@ vm.$watch('question',function(newValue, oldValue){
 
 例如,`number.a`的值改变,`deep:false`时不触发,为`true`时触发.
 
+### 过滤器
+
+过滤器可以用于对数据进行处理.
+
+一般要通过`|`管道符使用
+
+`{{time | timeFormater}}`.
+
+```js
+const vm = new Vue({
+  el: '#watch-example',
+  data: {
+    time: ''
+  },
+  filters:{
+      timeFormater(value){
+          console.log(value);
+          return '';
+      }
+  }
+}
+```
+
+过滤器可以添加参数,但是默认第一个参数为管道符前的数据.  
+
+#### 全局过滤器
+
+在Vue实例中定义的过滤器为局部过滤器.
+
+如果其他实例需要使用,要定义全局过滤器.
+
+```js
+Vue.filter('timeFormater',function(value){
+	return '';
+})
+```
+
 ### 条件渲染
 
 #### v-show
@@ -298,7 +355,183 @@ vm.$watch('question',function(newValue, oldValue){
 
 当列表无需更新,或者更新不会破坏原有的顺序结构时,可以使用`index`作为key,如果列表需要更新,不建议使用.应该使用数组数据的唯一标识.
 
-#### 过滤
+### Vue表单
+
+对于表单中的元素,使用`v-model`进行数据的双向绑定.
+
+特殊的元素,需要进行不同的绑定.
+
+#### 单选
+
+对于单选框,使用`v-model`绑定一个字符型变量,同时需要对元素添加`value`属性,选择之后变量值与value绑定.
+
+```html
+<form>
+    性别:
+    男<input type="radio" name="sex" v-model="userInfo.sex" value="0">
+    女<input type="radio" name="sex" v-model="userInfo.sex" value="1">
+</form>
+```
+
+#### 多选
+
+和单选相似,但是必须绑定一个数组型的变量.
+
+如果绑定字符型变量,则变量为`true`或`false`.
+
+#### 选择
+
+形如单选
+
+#### `v-model`
+
+同样可以添加修饰符,来进行控制.
+
+- `lazy`:元素失去焦点时才收集.
+- `number`:输入的字符转为数字存入变量.
+- `trim`:消除字符前后的空格.
+
+### 内置指令
+
+#### `v-text`
+
+向标签插入文本.会替换原来的内容.但是不会渲染HTML.
+
+#### `v-html`
+
+与`v-text`对应,会渲染HTML.
+
+#### `v-cloak`
+
+页面渲染时移除该属性.
+
+#### `v-once`
+
+初始渲染之后,无论其中数据如何变化,不再渲染.
+
+#### `v-pre`
+
+跳过所在节点的编译.可以加快编译.
+
+### 自定义指令
+
+#### 函数型
+
+``` js
+new Vue({
+    directives:{//指令对象
+    	big(element,binding){//(元素,指令实例)
+    		element.innerText = binding.value * 10;
+		}
+	}
+})
+```
+
+#### 对象型
+
+``` js
+new Vue({
+    directives:{
+        fbind:{
+            bind(){},//指令与元素绑定时调用
+            inserted(){},//指令所在元素被插入页面时调用
+            update(){}//指令所在模板被重新解析时调用
+        }
+    }
+})
+```
+
+### Vue生命周期
+
+四对生命周期钩子
+
+**before**\*, \***ed**
+
+- create
+- mount
+- update
+- destroy
+
+ #### `mounted`
+
+``` js
+new Vue({
+    mounted(){
+        console.log('Vue完成模板解析并挂载真实DOM后调用此方法');
+    }
+})
+```
+
+#### `updated`
+
+```js
+new Vue(){
+    updated(){
+       console.log('当页面数据变化,Vue重新解析时触发'); 
+    }
+}
+```
+
+#### `destroyed`
+
+```js
+new Vue(){
+    destroyed(){
+        console.log('页面销毁完成时调用,不影响之前的工作成果 ');
+    }
+}
+```
+
+
+
+## Vue组件
+
+### 非单文件组件
+
+一个HTML文件中有多个组件
+
+```js
+//创建一个组件
+const school = Vue.extend({
+    template:`
+      <div>
+        <h2>{{schoolName}}</h2>
+        <h2>{{address}}</h2>
+      </div>
+    `,
+    data(){
+        return {
+            schoolName:'HYNU',
+            address:'HN'
+        }
+    },
+    methods:{
+        
+    }
+})
+
+new Vue({
+    el:'#root',
+    componets:{
+        comp: school//注册组件(局部)
+        //或者
+        school//直接注册(局部)
+    }
+})
+
+Vue.component('school',school);//q
+```
+
+```html
+<!--使用组件-->
+<div id="root">
+    <comp></comp>
+</div>
+```
+
+
+
+### 单文件组件
 
 
 
