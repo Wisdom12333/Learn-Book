@@ -509,6 +509,10 @@ const school = Vue.extend({
         
     }
 })
+//组件的简写形式，要在脚手架中才能使用
+const s = {
+  name:"123"
+}
 
 new Vue({
     el:'#root',
@@ -531,7 +535,160 @@ Vue.component('school',school);//q
 
 
 
+#### 组件嵌套
+
+组件中注册组件
+
+```js
+//子组件student要提前定义
+const student = Vue.extend({
+  name:'student',
+  template:``,
+  data(){
+    
+  }
+})
+//父组件school
+const school = Vue.extend({
+  name:'school',
+  template:``,
+  data(){
+    
+  },
+  //注册组件
+  component:{
+    student
+  }
+})
+```
+
+子组件使用，要写在父组件的`template`中。
+
+#### VueComponent
+
+组件的实质，是一个构造函数。
+
+通过`Vue.extend`生成。
+
+
+
 ### 单文件组件
+
+.Vue 文件结构，一个组件就是一个.Vue文件
+
+``` vue
+<template>
+	<!--HTML-->
+</template>
+
+<script>
+  //引入组件
+  import CompName from ''
+  
+	export default {//暴露组件，使能被引用
+    name:'',
+    data(){
+      
+    },
+    methods:{
+      
+    },
+    components:{
+      //注册组件
+    }
+  }
+</script>
+
+<style>
+	/* CSS */
+</style>
+```
+
+#### `main.js`
+
+vm要注册在这个文件中。
+
+```js
+import App from './App.vue'
+
+new Vue({
+  el:'#root',//需要创建.html文件
+  components:{App},
+})
+```
+
+
+
+## 使用脚手架@vue/cli
+
+> **CLI**：Command Line Interface
+
+> Note: 
+>
+> - vue新建项目不能使用大写字符
+
+#### Vue中的`ref`
+
+在标签上添加`ref`属性，以替代`id`属性使用。
+
+通过`this.$refs.*`获取，可以获取到组件的实例对象。
+
+#### `props`配置
+
+通过向组件中配置`props`项，使组件可以通过标签属性接受数据。
+
+```vue
+<script>
+	export default {
+    name: 'Student',
+    data(){
+      return {
+        msg: '123'
+      }
+    },
+    props:['name','age','sex'],//简单接收
+    props:{//接收并进行类型检查
+    	name: String,
+      age: Number,
+      sex: String
+  	},
+    props:{//完整写法
+      name:{
+        type:String,
+        required:true
+      },
+      age:{
+        type:Number,
+        default:99
+      },
+      sex:{
+        type:String,
+        required:true
+      }
+    }
+  }
+</script>
+```
+
+但是不建议对`props`中的属性值进行修改。
+
+所以应该在`data`中配置。
+
+```vue
+<script>
+  export default {
+    name: 'Student',
+    data(){
+      return {
+        name: this.propName
+      }
+    },
+    props:['propName']
+  }
+</script>
+```
+
+
 
 
 
