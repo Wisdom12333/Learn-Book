@@ -688,7 +688,51 @@ new Vue({
 </script>
 ```
 
+#### `mixins`配置
 
+可以提取组件中的公共配置，以混合形式加入到组件中。
+
+```vue
+<script>
+  import {mix} from '../mix'
+	export default {
+    mixins:[mix]
+  }
+</script>
+```
+
+`mix`:
+
+```js
+export const mix = {
+  methods:{
+    
+  }
+}
+```
+
+以上是局部混合，如果要全局混合，可以在`main.js`中添加
+
+```js
+//main.js
+import {mix} from '../mix'
+Vue.mixin(mix)//使用此方法实现全局混合
+```
+
+#### 插件
+
+Vue中可以定义插件。
+
+```js
+//plugins.js
+export default {
+  install(){//插件必须使用install方法。
+    
+  }
+}
+```
+
+要使用同样需要在`main.js`中进行`import`。之后使用`Vue.use()`方法进行使用。
 
 
 
