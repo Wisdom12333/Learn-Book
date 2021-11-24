@@ -619,7 +619,69 @@ new Vue({
 
 
 
-## 使用脚手架@vue/cli
+## 组件自定义事件
+
+想要在父子组件中传递数据，除了通过父组件给子组件传递函数类型的`props`（子向父传递数据）
+
+也可以使用自定义事件实现。
+
+```vue
+<template>
+	<!--App.vue-->
+	<Student v-on:case="demo"></Student>
+</template>
+<script>
+	export default {
+    name: 'App',
+    methods: {
+      demo(param){}
+    }
+  }
+</script>
+```
+
+```vue
+<template>
+	<!--Student-->
+	<button @click="func">
+    button
+  </button>
+</template>
+<script>
+	export default {
+    name: 'Student',
+    methods: {
+      func(){
+        this.$emit('case','param')//通过这个方法来触发自定义事件
+      }
+    }
+  }
+</script>
+```
+
+另外，也可以给`Student`组件绑定`ref="Student"`属性，当App挂载完毕时，使用
+
+> `this.$refs.student.$on('case',this.demo)`
+>
+> 将`$on`替换为`$once`绑定仅可触发一次的事件。
+
+来对Student绑定事件。
+
+### 解绑自定义事件
+
+使用`this.$off('case')`来解绑事件。
+
+> 此方法每次仅可解绑单个事件。
+
+若要解绑多个，参数需使用数组类型，即`this.$off(['case','case2'])`。
+
+或者直接使用`this.$off()`解绑所有自定义事件。
+
+### Note
+
+需要注意的是，当在组件标签上使用原生事件的时候，需要添加`.native`修饰符，否则在渲染时会作为自定义事件。
+
+## 用脚手架@vue/cli
 
 > **CLI**：Command Line Interface
 
@@ -753,4 +815,20 @@ export default {
 Vue实例对象
 
 
+
+
+
+## 浏览器本地存储WebStorage
+
+使用window上的`localStorage`属性来保存本地存储。
+
+通过调用`setItem()`方法，它接受两个参数，`key`和`value`。
+
+想要读取，使用`getItem('key')`方法。
+
+删除：`removeItem('key')`。
+
+清空：`clear()`。
+
+相对应的，同样有**`sessionStorage`**。他们具有相同的参数，但是**`sessionStorage`**只会在一次会话中存储，当浏览器关闭，数据清空。
 
