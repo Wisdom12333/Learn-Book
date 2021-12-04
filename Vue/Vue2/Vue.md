@@ -681,7 +681,7 @@ new Vue({
 
 需要注意的是，当在组件标签上使用原生事件的时候，需要添加`.native`修饰符，否则在渲染时会作为自定义事件。
 
-## 用脚手架@vue/cli
+## 使用脚手架@vue/cli
 
 > **CLI**：Command Line Interface
 
@@ -781,6 +781,12 @@ import {mix} from '../mix'
 Vue.mixin(mix)//使用此方法实现全局混合
 ```
 
+#### `$nextTick`
+
+`this.$nextTick(回调函数)
+
+Vue上的这个方法，接收一个函数，在Vue更新完DOM节点之后，执行该函数。
+
 #### 插件
 
 Vue中可以定义插件。
@@ -797,6 +803,201 @@ export default {
 要使用同样需要在`main.js`中进行`import`。之后使用`Vue.use()`方法进行使用。
 
 
+
+## 全局数据总线
+
+用于任意组件间通信。
+
+```js
+new Vue({
+  el:'app',
+  render: h=>h(app),
+  beforeCreate(){
+    Vue.prototype.$bus= this//安装全局事件总线。
+  }
+})
+```
+
+当两个组件通信时，A组件通过`$on`向`$bus`添加自定义事件，之后B组件使用`$emit`事件触发，并向A组件发送数据。
+
+
+
+## 消息订阅与发布
+
+需要接受数据的组件，进行消息的订阅，由提供数据的组件发布消息，并传输数据。
+
+需要使用第三方库，例如`pubsub`。
+
+`npm i pubsub-js`
+
+使用时组件需要引入`import pubsub from 'pubsub-js'`。
+
+### 消息订阅
+
+```js
+this.pubId = pubsub.subscribe('msgName',function(msgName,data)=>{
+	//todo                 
+})
+//取消订阅
+pubsub.unsubscribe(this.pubId);
+```
+
+### 消息发布
+
+```js
+pubsub.publish('msgName',data);
+```
+
+
+
+## 过渡与动画
+
+### 动画
+
+Vue中使用`transition`标签，对其中内容添加动画。
+
+> `transition`标签内部，只能有一个元素。
+>
+> 多个元素要使用`transition-group`，并且为每个元素添加`key`属性。
+
+当标签中内容显示或隐藏时，分别会触发`.v-enter-active`和`.v-leave-active`绑定的动画。
+
+使用标签的`name`属性，其值替换css中的`v`。即`<transition name="hi"></transition>`，使用`.hi-enter-active`。
+
+添加`appear`属性，使界面初始化时触发进入动画。
+
+### 过渡
+
+```vue
+<template>
+	<div>
+  <transition>
+    <h1>HI</h1>
+  </transition>
+  </div>
+</template>
+<style scoped>
+  .v-enter-active, .v-leave-active{
+    transition: 0.5s linear;/*设置动画时间并使其匀速*/
+  }
+  /*进入的起点，离开的终点*/
+  .v-enter, .v-leave-to{
+    transform: translateX(-100%);
+  }
+  /*进入的终点，离开的起点*/
+  .v-enter-to, .v-leave{
+    transform: translateX(0);
+  }
+</style>
+```
+
+### 第三方动画库
+
+可以使用`Animate.css`库。通过`npm install animate.css --save`安装。
+
+```vue
+<template>
+	<div>
+  <transition 
+    name="animate_animated animate_bounce"
+    enter-active-class="**"
+    leave-active-class="**">
+    <h1>HI</h1>
+  </transition>
+  </div>
+</template>
+<script>
+  import 'animate.css'
+  export default {
+    name: 'Test',
+  }
+</script>
+```
+
+
+
+## Vue解决Ajax跨域问题
+
+使用vue-cli脚手架开启前端相同端口的代理服务器。
+
+数据经过代理服务器来进行转发，避免跨域问题。
+
+在`vue.config.js`中，配置如下属性。
+
+```js
+//开启代理服务器
+devServer: {
+  proxy: 'http://localhost:8181'//后端服务端口号
+}
+```
+
+需要注意的是，只有代理服务器不存在的数据，才会进行转发，否则会返回代理服务器的数据。
+
+要避免这个问题，如下
+
+```js
+devServer: {
+  proxy: {
+    '/**':{//前缀，当代理服务器收到此前缀的请求时，进行转发
+      target:"**",//目的服务器
+      pathRewrite:{"^/**":""},//设置路径重写，去掉前缀。
+      ws： true，//用于支持websocket，默认true
+      changeOrigin：true //请求改变其自身host，使其来源与目的端口相同，默认true。
+    }，
+    '/demo':{
+      target:'**',//代理转发向另一台服务器
+    }
+  }
+}
+```
+
+## Vue插槽
+
+### 默认插槽
+
+当一个组件多次使用，但是其中元素并不相同（一个显示列表，另一个显示图片），可以使用插槽。
+
+**父组件向子组件指定位置插入HTML结构。**
+
+对组件使用完整标签代替自结束标签，并将元素置于其中。
+
+```vue
+<template>
+	<div>
+    <Component>
+      <img src="https://www.ddd.com/image" alt=""/>
+  	</Component>
+  </div>
+</template>
+```
+
+在组件中使用`<slot></slot>`标签，告诉Vue对内容进行插入。
+
+`slot`标签中可以设置默认内容，当没有数据传输时，显示默认内容。
+
+### 具名插槽
+
+如果有多个元素需要添加入组件中不同位置，应该使用具名插槽。
+
+向插入元素中添加`slot`属性，同时向组件`slot`标签添加`name`属性与之对应。
+
+如果插入元素具有相同的`slot`属性，则会放入同一位置。
+
+如果插入元素最外层使用了`template`标签，可以使用`v-slot:name`代替`slot="name"`。
+
+### 作用域插槽
+
+如果使用`slot`时，外部标签中需要使用组件中的数据，向组件的`slot`标签添加自定义的绑定数据。
+
+`<slot :games="games"></slot>`
+
+外部标签使用`<template scope="name"></template>`包裹，获取数据`name.games`。
+
+可以使用`<slot-scope="{games}">`代替，他们有相同的效果。
+
+> 可以传递多个数据，会存储与`name`对象中。
+
+> 如果只传递单个数据，那么可以使属性值相同，直接获取。
 
 
 
