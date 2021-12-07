@@ -802,6 +802,22 @@ export default {
 
 要使用同样需要在`main.js`中进行`import`。之后使用`Vue.use()`方法进行使用。
 
+#### `scoped`样式
+
+多个组件的样式在使用时会汇总到一起.
+
+相同的样式会根据引入组件的顺序,使用最后引入的样式.
+
+可以通过在`style`标签上添加`scoped`属性解决.
+
+```vue
+<style scoped>
+    .demo{
+        background-color:orange 
+    }
+</style>
+```
+
 
 
 ## 全局数据总线
