@@ -16,23 +16,25 @@
 首先需要创造`store`
 
 ```js
-import { createStore } from "vuex";
+import { Vue } from "vue";
+import { Vuex } from "vuex";
 
-export default createStore({
-  state: {
-    //由vuex维护的数据
-  },
-  mutations: {
-    //对state中的数据进行加工
-  },
-  actions: {
-    //加工前的操作
-  },
-  modules: {},
+Vue.use(Vuex);
+
+const state:{};
+const actions:{};
+const mutations:{};
+const getters:{};
+
+export default new Vuex.Store({
+  state,//由vuex维护的数据
+  mutations,//对state中的数据进行加工
+	actions,//加工前的操作
+	getters,//类似Vue计算属性，可以对state数据加工并且返回一个值
 });
 ```
 
-在`main.js`中，使用`Vue.use()`方法添加`store`。
+
 
 要对`vuex`中数据进行管理，使用`this.$store.dispatch("funcName", param)`来进行调用`actions`中的相应方法。
 
@@ -41,3 +43,76 @@ export default createStore({
 如果数据无需进行业务的处理，可以在组件中直接使用`this.$store.commit("FUNCNAME",param)`。
 
 > 在`mutations`中，尽量只对`state`进行操作。
+
+
+
+## mapState&mapGetters
+
+如果组件内，有多个地方需要用到`state`中对属性，可以使用`mapState`进行映射。
+
+``` vue
+<script>
+  import { mapState,mapGetters } from 'Vuex'
+  export default {
+    name: 'Component',
+    computed: {
+      ...mapState({接收的名字:'需要的属性名',..,..}),
+      //数组写法
+      ...mapState(['需要的属性名','..','..']),
+    }
+  }
+</script>
+
+```
+
+同理，`getters`也有方法，使用`...mapGetters({接收的名字:'需要的getter名'})`,他也有同样的数组写法。
+
+
+
+## mapActions&mapMutations
+
+和`mapState`具有接近的用法，但是需要给生成的方法调用时添加参数。
+
+```vue
+<template>
+	<button @click="func(1)">click</button>
+</template>
+<script>
+	export default {
+    name:"Component",
+    methods: {
+      ...mapMutations({func:"FUNC"}),
+      //func(){ this.$store.commit("FUNC",1); }
+    }
+  }
+</script>
+```
+
+
+
+## Vuex模块化
+
+使用Vuex中的`modules`进行模块化管理，使各个模块负责各自的功能。
+
+```js
+const module1 = {
+  namespaced:true,//配置使map能识别
+  //state,actions,mutations
+};
+const module2 = {
+  //state,actions,mutations
+};
+
+export default new Vuex.Store({
+  modules:{
+    a: module1,
+    b: module2
+  }
+})
+```
+
+使用可以按照原方法使用，也可以单独提取某个模块，如`...mapState('module1',['..','..'])`。
+
+`commit`方法，要针对方法添加模块名，如`this.$store.commit('moduleName/funcName',value)`。
+
+另外，也可以将不同模块配置在不同的js文件中，并暴露，在`store`中进行导入。
