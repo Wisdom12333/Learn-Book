@@ -142,3 +142,30 @@ routes:[
 使用`router-link`标签做跳转时，默认是push模式，会存入历史记录。
 
 向标签添加`replace`属性，变为替换模式，会替换当前记录。
+
+## 编程式路由
+
+可以使用`js`方法代替`router-link`标签来进行跳转.
+
+```js
+pushShow(m){
+    this.$router.push({
+        name:'xiangqing',
+        query:{
+            id:m.id,
+            title:m.title
+        }
+    })
+}
+// this.$router.back() 回退
+// this.$router.forward() 前进
+// this.$router.go() 接受一个整数,正数前进,负数后退
+```
+
+## 缓存路由组件
+
+如果要防止路由切换之后,原路由组件被销毁(例如表单数据),可以使用
+
+`<keep-alive include="组件名称"></keep-alive>`
+
+对`<router-view>`进行包裹.如果不添加`include`属性,则会对所有组件生效.多个`include`内容使用`,`分隔.
