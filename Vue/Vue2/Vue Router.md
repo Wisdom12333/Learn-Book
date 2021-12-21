@@ -143,7 +143,6 @@ routes:[
 
 向标签添加`replace`属性，变为替换模式，会替换当前记录。
 
-<<<<<<< Updated upstream
 ## 编程式路由
 
 可以使用`js`方法代替`router-link`标签来进行跳转.
@@ -170,7 +169,7 @@ pushShow(m){
 `<keep-alive include="组件名称"></keep-alive>`
 
 对`<router-view>`进行包裹.如果不添加`include`属性,则会对所有组件生效.多个`include`内容使用`,`分隔.
-=======
+
 
 
 ## Vue-Router中的生命周期
