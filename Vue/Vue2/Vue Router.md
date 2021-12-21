@@ -143,6 +143,7 @@ routes:[
 
 向标签添加`replace`属性，变为替换模式，会替换当前记录。
 
+<<<<<<< Updated upstream
 ## 编程式路由
 
 可以使用`js`方法代替`router-link`标签来进行跳转.
@@ -169,3 +170,96 @@ pushShow(m){
 `<keep-alive include="组件名称"></keep-alive>`
 
 对`<router-view>`进行包裹.如果不添加`include`属性,则会对所有组件生效.多个`include`内容使用`,`分隔.
+=======
+
+
+## Vue-Router中的生命周期
+
+如果向某个路由组件添加了路由缓冲，切换路由时，不会销毁组件触发`destroy`事件。
+
+Vue-Router中提供了两个特有的生命周期钩子。
+
+- `activated`
+
+激活，路由组件展示时调用。
+
+- `deactivated`
+
+失活，路由组件切换时调用。
+
+
+
+## 路由守卫
+
+用于保护路由安全，控制路由的访问权限。
+
+### 全局路由守卫
+
+在Vue-Router的`index.js`中，向router的实例对象调用`beforeEach`方法。
+
+```js
+//全局前置路由守卫，一般用于对路由权限进行控制
+router.beforeEach((to,from,next)=>{//在路由切换前或者初始化时，自动调用
+  next();
+  //to显示目的路由，from显示出发路由，使用next()放行。
+})
+//全局后置路由守卫
+router.afterEach((to,from)=>{//路由切换之后触发
+  
+})
+```
+
+除此之外，可以向router中的`meta`属性添加自定义参数来进行判断，
+
+```js
+const routes = [
+  {
+    path: "/",
+    name: "App",
+    redirect: "/index",
+    component: App,
+    meta: {isAuth:true}//添加是否认证，之后根据该自定义参数来判断
+  },
+]
+```
+
+### 独享路由守卫
+
+针对单独路由生效的路由守卫。
+
+```js
+const routes = [
+  {
+    path: "/",
+    name: "App",
+    redirect: "/index",
+    component: App,
+    meta: {isAuth:true},//添加是否认证，之后根据该自定义参数来判断
+    beforeEnter:(to,from,next)=>{//进入路由界面前触发
+  		//...
+  	},
+  },
+]
+```
+
+独享路由守卫，仅有前置守卫，没有后置守卫。
+
+### 组件内路由守卫
+
+存在于组件内的路由守卫。
+
+```vue
+<script>
+  export default {
+  	name: "Index",
+  	beforeRouteEnter(to,from,next){
+      //通过路由规则进入该组件时，触发
+    },
+    beforeRouteLeave(to,from,next){
+      //通过路由规则离开该组件时，触发
+    }
+};
+</script>
+```
+
+>>>>>>> Stashed changes
