@@ -73,7 +73,11 @@
 </script>
 ```
 
+## reactive函数
 
+定义一个对象类型的响应式数据.
+
+使用reactive函数代理的数据不同于ref函数,没有value属性.
 
 
 
