@@ -40,6 +40,12 @@
 
 > 尽量不要将setup与Vue2的配置进行混用。
 
+setup 可以接收两个参数,首先是`props`,收到的是父组件传递且组件内部声明接收的`props`.
+
+然后是`context`,其中包括`attrs`,`emit`和`slots`.
+
+
+
 ## ref函数
 
 直接添加入`setup`函数中的数据,Vue并不会进行响应式的数据代理.
@@ -78,6 +84,8 @@
 定义一个对象类型的响应式数据.
 
 使用reactive函数代理的数据不同于ref函数,没有value属性.
+
+因为reactive是通过`Proxy`来实现响应式的,并通过`Reflect`操作源对象内部数据.
 
 
 
