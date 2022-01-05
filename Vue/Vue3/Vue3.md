@@ -89,6 +89,35 @@ setup 可以接收两个参数,首先是`props`,收到的是父组件传递且�
 
 
 
+## `computed`计算属性
+
+使用`computed()`方法,声明一个计算属性.
+
+```js
+person.fullName =  computed(()=>{
+    return person.firstName + '-' + person.lastName;
+})
+```
+
+可以直接向一个响应式的对象中添加一个计算属性,它同样会被Vue侦测.
+
+## `watch`监视
+
+```js
+watch(data,(newValue,oldValue)=>{
+    //data为基本类型
+},{deep:true});//监视的配置为第二个参数
+//监视多个数据
+watch([data1,data2],(newValue,oldValue)=>{
+    //收到的参数也是数组
+});
+
+```
+
+
+
+
+
 ## 生命周期钩子
 
 在Vue3中,依然可以使用Vue2的生命周期钩子.
