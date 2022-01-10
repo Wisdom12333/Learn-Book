@@ -114,6 +114,28 @@ watch([data1,data2],(newValue,oldValue)=>{
 
 ```
 
+`watch`监视的由`reactive`定义的响应式数据,
+
+- 无法正确获取到 oldValue,而`ref`可以.
+
+- 并且会强制深度监视.
+
+同时,如果要监视`reactive`对象中的某个属性,需要如下写法:
+
+`watch(()=>person.name,(newValue,oldValue)=>{})`
+
+### watchEffect
+
+智能监视,
+
+```js
+watchEffect(()=>{
+    ...
+})
+```
+
+会自动监视,其中使用到的响应式数据.
+
 
 
 
