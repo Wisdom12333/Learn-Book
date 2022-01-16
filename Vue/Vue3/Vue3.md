@@ -150,3 +150,24 @@ watchEffect(()=>{
 
 ![image-20211230115844963](image-20211230115844963.png)
 
+
+
+## 自定义hook函数
+
+hook  -- 对组合式API进行封装的函数.
+
+简单来说就是将逻辑封装到单独的`.js`文件中,在`.vue`中引入并且使用.	
+
+## toRef与toRefs
+
+假设存在响应式对象`person`,含有一个`name`属性,
+
+> `const name = person.name`,得到的是一个非响应式的数据.
+
+如果要获取响应式的属性,使用`const name = toRef(person,'name')`写法.
+
+toRefs将处理一个对象的所有属性.
+
+### shallowReactive和shallowRef
+
+shallowReactive只处理对象类型,shallowRef只处理普通类型.
